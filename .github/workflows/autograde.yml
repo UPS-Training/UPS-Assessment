@@ -1,0 +1,43 @@
+name: .NET Build Workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout your code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. Setup .NET SDK
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v5.0.1
+        with:
+          dotnet-version: '7.0.x'  # replace with your required SDK version
+          # dotnet-quality: 'ga'   # optional, default is ga
+          # global-json-file: './global.json' # optional
+          # source-url: 'https://nuget.pkg.github.com/OWNER/index.json' # optional
+          # owner: 'OWNER'  # optional, used with GitHub Packages
+          # config-file: './NuGet.config' # optional
+          # cache: 'true'  # optional, enable caching of NuGet packages
+          # cache-dependency-path: '**/packages.lock.json' # optional
+
+      # 3. Restore dependencies
+      - name: Restore dependencies
+        run: dotnet restore
+
+      # 4. Build the project
+      - name: Build
+        run: dotnet build --no-restore --configuration Release
+
+      # 5. Run tests
+      - name: Test
+        run: dotnet test --no-build --verbosity normal
